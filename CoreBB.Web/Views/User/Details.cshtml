@@ -1,0 +1,59 @@
+﻿@using CoreBB.Web.Models
+@model User
+@{
+    ViewBag.Title = "User Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container col-6 offset-3" style="margin-top:120px">
+    <div class="card border-info">
+        <div class="card-header text-white bg-info">
+            <strong>User Detail Information</strong>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td><strong>ID</strong></td>
+                    <td>@Model.Id</td>
+                </tr>
+                <tr>
+                    <td><strong>Name</strong></td>
+                    <td>@Model.Name</td>
+                </tr>
+                <tr>
+                    <td><strong>Description</strong></td>
+                    <td>@Model.Description</td>
+                </tr>
+                <tr>
+                    <td><strong>Administrator</strong></td>
+                    <td><input type="checkbox" asp-for="IsAdministrator" disabled="disabled" /></td>
+                </tr>
+                <tr>
+                    <td><strong>Locked</strong></td>
+                    <td><input type="checkbox" asp-for="IsLocked" disabled="disabled" /></td>
+                </tr>
+                <tr>
+                    <td><strong>Register Date</strong></td>
+                    <td>@Model.RegisterDateTime.ToShortDateString()</td>
+                </tr>
+                <tr>
+                    <td><strong>Last Login</strong></td>
+                    <td>@Model.LastLogInDateTime.ToShortDateString()</td>
+                </tr>
+                <tr>
+                    <td><strong>Operation</strong></td>
+                    <td>
+                        @if (User.IsInRole(Roles.Administrator) || User.Identity.Name == Model.Name)
+                        {
+                            <a class="btn-sm btn-primary" asp-action="Edit" asp-route-name="@Model.Name">Update</a>
+                        }
+                        <a class="btn-sm btn-warning" asp-controller="Message" asp-action="Create" asp-route-tousername="@Model.Name">Send Message</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

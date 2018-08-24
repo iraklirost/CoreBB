@@ -1,0 +1,79 @@
+﻿@using CoreBB.Web.Models
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="~/Content/jQuery/jquery-3.3.1.js"></script>
+    <script src="~/Content/Bootstrap/js/bootstrap.js"></script>
+    <script src="~/Content/Bootstrap/js/bootstrap.bundle.js"></script>
+    <link href="~/Content/Bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" asp-action="Index" asp-controller="Home">CoreBB</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="Home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="Forum">Forums</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="Message">Messages</a>
+                </li>
+                @if (User.IsInRole(Roles.Manager))
+                {
+                    <li>
+                        <p>It's Manager!</p>
+                    </li>
+                    <a asp-action="Index" asp-controller="Home" asp-route-id ="@Roles.Administrator">go to home with id</a>
+                }
+
+                @if (User.IsInRole(Roles.Administrator))
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Manage
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" asp-controller="User" asp-action="Index">Users</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-controller="Forum" asp-action="Create">Create Forum</a>
+                        </div>
+                    </li>
+                }
+            </ul>
+            <div class="pull-right">
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <div class="btn-group btn-group-sm">
+                        <a class="btn btn-secondary btn-info" asp-controller="User" asp-action="LogIn">Log In</a>
+                        <a class="btn btn-secondary btn-info" asp-controller="User" asp-action="Register">Register</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="btn-group btn-group-sm">
+                        <a class="btn btn-secondary btn-info" asp-controller="User" asp-action="Detail" asp-route-name="@User.Identity.Name">
+                            My Account
+                        </a>
+                        <a class="btn btn-secondary btn-info" asp-controller="User" asp-action="LogOut">Log Out</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        @RenderBody()
+    </div>
+
+    <hr />
+    <footer>
+        <p>&copy; 2017 - CoreBB</p>
+    </footer>
+</body>
+</html>

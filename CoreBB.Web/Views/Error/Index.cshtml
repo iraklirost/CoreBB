@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewData["Title"] = "Error";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>HTTP @ViewData["StatusCode"] Error</h2>
+<p>
+    <strong class="alert-warning">@ViewData["Message"]</strong>
+</p>
+<hr />
+<h5>Debug Information:</h5>
+<p>
+    @ViewData["StackTrace"]
+</p>
