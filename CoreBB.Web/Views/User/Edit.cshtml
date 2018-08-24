@@ -1,0 +1,78 @@
+﻿@using CoreBB.Web.Models
+@model UserEditViewModel
+@{
+    ViewBag.Title = "Update User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="Name" />
+    <input type="hidden" asp-for="RegisterDateTime" />
+    <input type="hidden" asp-for="LastLogInDateTime" />
+
+    <div class="container col-6 offset-3" style="margin-top:120px">
+        <div class="card border-info">
+            <div class="card-header text-white bg-info">
+                <strong>Update User</strong>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th>Property</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td><strong>ID</strong></td>
+                        <td>@Model.Id</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Name</strong></td>
+                        <td>@Model.Name</td>
+                    </tr>
+                    @if (!User.IsInRole(Roles.Administrator))
+                    {
+                        <tr>
+                            <td><strong>Current Password</strong></td>
+                            <td><input class="form-control" type="password" asp-for="CurrentPassword" /></td>
+                        </tr>
+                    }
+                    <tr>
+                        <td><strong>New Password</strong></td>
+                        <td><input class="form-control" type="password" asp-for="Password" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Repeat New Password</strong></td>
+                        <td><input class="form-control" type="password" asp-for="RepeatPassword" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Description</strong></td>
+                        <td><textarea class="form-control" asp-for="Description"></textarea></td>
+                    </tr>
+                    @if (User.IsInRole(Roles.Administrator) && User.Identity.Name != Model.Name)
+                    {
+                        <tr>
+                            <td><strong>Administrator</strong></td>
+                            <td><input type="checkbox" asp-for="IsAdministrator" /></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Locked</strong></td>
+                            <td><input type="checkbox" asp-for="IsLocked" /></td>
+                        </tr>
+                    }
+                    <tr>
+                        <td><strong>Register Date</strong></td>
+                        <td>@Model.RegisterDateTime.ToShortDateString()</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last Login</strong></td>
+                        <td>@Model.LastLogInDateTime.ToShortDateString()</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Update</strong></td>
+                        <td><input type="submit" class="btn-sm btn-success" value="Update" /></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>

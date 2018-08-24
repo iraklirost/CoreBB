@@ -153,5 +153,76 @@ namespace CoreBB.Web.Controllers
             return View(user);
         }
         #endregion
+
+        #region Edit
+        [HttpGet]
+        public IActionResult Edit(string name)
+        {
+            var user = _dbContext.User.SingleOrDefault(u => u.Name == name);
+
+            if (User.Identity.Name != name && !User.IsInRole(Roles.Administrator))
+                throw new Exception("Access Denied!");
+
+            if (user == null)
+                throw new Exception($"User  {name} is not exists!");
+            var model = UserEditViewModel.FromUser(user);
+
+            return View(model);
+        }
+        #endregion
+
+        #region Edit Post
+        [HttpPost]
+        public async Task<IActionResult> Edit(UserEditViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new Exception("Invalid user information.");
+            }
+
+            var user = _dbContext.User
+                .SingleOrDefault(u => u.Name.Equals(model.Name, StringComparison.CurrentCultureIgnoreCase));
+
+            if (user == null)
+            {
+                throw new Exception("User does not exist.");
+            }
+
+            if (!string.IsNullOrEmpty(model.Password))
+            {
+                model.Password = model.Password.Trim();
+                model.RepeatPassword = model.RepeatPassword.Trim();
+                if (!model.Password.Equals(model.RepeatPassword))
+                {
+                    throw new Exception("Passwords are not identical.");
+                }
+
+                var hasher = new PasswordHasher<User>();
+                if (!User.IsInRole(Roles.Administrator))
+                {
+                    var vr = hasher.VerifyHashedPassword(user, user.PasswordHash, model.CurrentPassword);
+                    if (vr != PasswordVerificationResult.Success)
+                    {
+                        throw new Exception("Please provide correct current password.");
+                    }
+                }
+
+                user.PasswordHash = hasher.HashPassword(user, model.Password);
+            }
+
+            user.Description = model.Description;
+
+            if (User.IsInRole(Roles.Administrator))
+            {
+                user.IsAdministrator = model.IsAdministrator;
+                user.IsLocked = model.IsLocked;
+            }
+
+            _dbContext.User.Update(user);
+            await _dbContext.SaveChangesAsync();
+
+            return RedirectToAction("Detail", new { name = user.Name });
+        }
+        #endregion
     }
 }
